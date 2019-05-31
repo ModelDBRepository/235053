@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta name="generator" content="HTML::TextToHTML v2.5201"/>
+</head>
+<body>
+<p>This readme and the code was taken from the first authors github repository:  <a href="https://github.com/SilverLabUCL/MF-GC-network-backprop-public">https://github.com/SilverLabUCL/MF-GC-network-backprop-public</a>
+</p>
+<p>This is the code necessary to reproduce all major figures for Cayco-Gajic, Clopath &amp; Silver 2017, "Sparse synaptic connectivity is required for decorrelation and pattern separation in feedforward networks." 
+</p>
+<p>Getting started<br/>
+This repo contains both Matlab and Python code. In general, the Matlab scripts are designed to be run locally and Python scripts to be run on a cluster. All simulations require pre-generated network connectivities and input statistics, which are used by both the analytical and biophysical models. These can either be generated from scratch (see below) or the example pre-generated files (which are already in the network_structures and input_statistics folders) can be used.<br/>
+To generate new network connectivities, use:<br/>
+network_structures/GCL_make_connectivity.py<br/>
+To change input statistics, use:<br/>
+input_statistics/generate_input_patterns.m<br/>
+This requires the Dichotomized Gaussian tools from the Macke Lab in order to generate spike trains with arbitrary correlations. See: <a href="https://bitbucket.org/mackelab/pop_spike/src">https://bitbucket.org/mackelab/pop_spike/src</a>.<br/>
+</p>
+<p>Simulations<br/>
+For the analytical model, simulations are done within the .m plotting files, or within the .py file for backpropagation. On the other hand, the biophysical model must be simulated on a cluster prior to analysing the patterns. First the parameters must be initalized via:<br/>
+biophysical_model/initialize_network_params.py<br/>
+This creates the file params_file.pkl, which is used to run array jobs on an external cluster (skip this step if using pre-simulated data). After initialization, the following script simulates the model:<br/>
+biophysical_model/run_mf_grc_network.py<br/>
+This saves the GC and MF spike times as .dat files for each simulation. To save memory, after finishing the simulations run the following code and then remove the .dat files:<br/>
+biophysical_model/save_samples_as_txt.py<br/>
+This converts the spike times to spike count activity patterns, which are used in all analyses.<br/>
+Note that simulating the biophysical model requires NeuroML2, jNeuroML, and pyNeuroML (<a href="https://github.com/NeuroML">https://github.com/NeuroML</a>). The folder grc_lemsDefinitions includes NeuroML2 and XML files necessary to run the biophysical model.<br/>
+</p>
+<p>Analysis<br/>
+Activity pattern properties (variance, covariance, population sparseness) can be computed using the following code:<br/>
+analytical_model/get_var_cov.m<br/>
+or<br/>
+biophysical_model/get_cov_randompatterns.py<br/>
+To run backpropagation, use either:<br/>
+analytical_model/test_mf_grc_backprop.py<br/>
+or<br/>
+biophysical_model/test_mf_grc_backprop_biophys.py<br/>
+For the analytical model, the .m files above will automatically produce relevant plots. For the biophysical model, after running the above .py files, use:<br/>
+biophysical_model/analyze_simulated_data.m</p>
+
+</body>
+</html>
